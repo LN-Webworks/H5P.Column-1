@@ -329,7 +329,7 @@ H5P.Column = (function (EventDispatcher) {
                     }
                   });
           
-                  confirmationDialog.appendTo(wrapper);
+                  confirmationDialog.appendTo(parent.document.body);
                   confirmationDialog.show();
                   //H5P.jQuery(window.parent).scrollTop(0); 
                   H5P.jQuery(".h5p-confirmation-dialog-popup").css("top", "80%");
@@ -612,7 +612,11 @@ H5P.Column = (function (EventDispatcher) {
         return false;
 
       }else if(type == "Course Presentation") {
+        console.log(instances.slidesWithSolutions);
         for (const slide of instances.slidesWithSolutions) {
+          if(typeof slide === "undefined" || slide == ""){
+            continue;
+          }
           for(const item of slide) {
             if(typeof item.getAnswerGiven === "function" && item.getAnswerGiven()){
               
