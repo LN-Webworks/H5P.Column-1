@@ -30,6 +30,8 @@ H5P.Column = (function (EventDispatcher) {
     var instances = [];
     var instanceContainers = [];
 
+    var skipped = [];
+
     // Number of tasks among instances
     var numTasks = 0;
 
@@ -121,7 +123,7 @@ H5P.Column = (function (EventDispatcher) {
       var instance = H5P.newRunnable(content, id, undefined, true, contentData);
 
       // Bubble resize events
-      bubbleUp(instance, 'resize', self);
+      //bubbleUp(instance, 'resize', self);
 
       // Check if instance is a task
       if (Column.isTask(instance)) {
@@ -277,7 +279,69 @@ H5P.Column = (function (EventDispatcher) {
         // Add content
         addRunnable(content.content, grabContentData(i));
       }
+      if(typeof data.parent == "undefined") {
+        H5P.JoubelUI.createButton({
+          class: "view-summary ",
+          html: 'View Summary',
+          on: {
+              click: function () {
+                H5P.jQuery('.custom-summary-section').remove();
+                H5P.jQuery('.submit-answers').remove();
+                
+                  var confirmationDialog = new H5P.ConfirmationDialog({
+                    headerText: 'Column Layout Summary',
+                    dialogText: createSummary(wrapper,tasksResultEvent),
+                    cancelText: 'Cancel',
+                    confirmText: "Submit Answers"
+                  });
+                  confirmationDialog.on('confirmed', function () {
+                    //self.removeGoal($removeContainer);
+                    // Set focus to add new goal button
+                    //self.$createGoalButton.focus();
+                    var rawwa = 0;
+                    var maxwa = 0;
+                    console.log(tasksResultEvent);
+                    for (var m = 0; m < tasksResultEvent.length; m++) {
+                      var eventwa = tasksResultEvent[m];
+                      if(typeof eventwa != "undefined"){
+                        rawwa += eventwa.getScore();
+                        maxwa += eventwa.getMaxScore();
+                      }
+                      
+                    }
+                    if(maxwa === rawwa) {
+                      maxwa += 1;
+                    }
+                    self.triggerXAPIScored(rawwa, maxwa, 'submitted-curriki');
+                    console.log(skipped);
+                    for(skip_rec of skipped) {
+                      console.log('skipped');
+                      //skip_rec.triggerXAPIScored(rawwa, maxwa, 'skipped');
+                      const customProgressedEvent = skip_rec.createXAPIEventTemplate('skipped');
+            
+                      if (customProgressedEvent.data.statement.object) {
+                        //customProgressedEvent.data.statement.object.definition['name'] = {'en-US': skip_rec.contentData.metadata.title};
+                        console.log(customProgressedEvent);
+                        //section.instance.triggerXAPIScored(0,1,customProgressedEvent);
+                        skip_rec.trigger(customProgressedEvent);
+                      }
+
+                    }
+                  });
+          
+                  confirmationDialog.appendTo(wrapper);
+                  confirmationDialog.show();
+                  //H5P.jQuery(window.parent).scrollTop(0); 
+                  H5P.jQuery(".h5p-confirmation-dialog-popup").css("top", "80%");
+              },
+          },
+          appendTo: wrapper,
+      });
+      }
+      
     };
+
+    
 
     /**
      * Attach the column to the given container
@@ -463,6 +527,124 @@ H5P.Column = (function (EventDispatcher) {
 
       return definition;
     };
+
+    var createSummary = function (wrapper,tasksResultEvent) {
+        
+        var table_content = '<tbody>';
+      
+        var i=0;
+        for(const inst of instances) {
+          
+          var param_content = params.content[i];
+          var content_type = param_content.content.metadata.contentType;
+          
+          if( typeof inst.getAnswerGiven == "function" && !inst.getAnswerGiven()){
+            skipped.push(inst);
+            table_content += printSkippedTr(param_content.content.metadata.title);
+            
+            i++;
+            continue;
+          }
+          
+          if(content_type == "Course Presentation" || content_type == "Interactive Video" || content_type == "Questionnaire") {
+            
+                var cpTaskDone = checkSkippedStatus(inst,content_type);
+                
+                if(!cpTaskDone) {
+                  skipped.push(inst);
+                  table_content +=printSkippedTr(param_content.content.metadata.title);
+                  i++;
+                  continue;
+                }
+          }
+
+        if(typeof inst.getScore == "undefined") {
+            var cust_score = 0;
+            var cust_max_score = 0;
+
+        }else {
+          var cust_score = inst.getScore();
+          var cust_max_score = inst.getMaxScore();
+        }
+        table_content += '<tr>';
+        table_content += '<td>'+param_content.content.metadata.title+'</td>';
+        table_content += '<td>'+cust_score+'/'+cust_max_score+'</td>';
+        table_content += '</tr>';
+        i++;
+      } 
+      table_content += '</tbody>';
+     
+      var summary_html = '<div class="custom-summary-section"><div class="h5p-summary-table-pages"><table class="h5p-score-table-custom" style="min-height:100px;"><thead><tr><th>Content</th><th>Score/Total</th></tr></thead>'+table_content+'</table></div></div>';
+      
+      return summary_html;
+      
+      
+    };
+
+    /**
+     * To print the skipped elem tr
+     * @param {*} title 
+     */
+    function printSkippedTr(title) {
+      
+          var table_content = '<tr>';
+          table_content += '<td>'+title+'  (Skipped) </td>';
+          table_content += '<td>0/0</td>';
+          table_content += '</tr>';
+         return table_content;
+         
+    }
+
+
+    /**
+     * To check if the instances has been skipped or not
+     * @param {*} instances 
+     * @param {*} type 
+     */
+    function checkSkippedStatus(instances, type) {
+      if(type == "Interactive Video") {
+        for (const iv_interaction of instances.interactions) {
+          if(typeof iv_interaction.getLastXAPIVerb() != "undefined") {
+            console.log(iv_interaction.getLastXAPIVerb());
+            return true;
+          }
+        }
+        return false;
+
+      }else if(type == "Course Presentation") {
+        for (const slide of instances.slidesWithSolutions) {
+          for(const item of slide) {
+            if(typeof item.getAnswerGiven === "function" && item.getAnswerGiven()){
+              
+              return true;
+            }else if(typeof item.getAnswerGiven == 'undefined'  ) {
+              var flag = 0;
+              item.interactions.forEach(function(pp,mm){ 
+                  console.log(pp.getLastXAPIVerb());
+                  if(pp.getLastXAPIVerb() !== undefined) {
+                      flag = 1;
+                  }
+              })
+            if(flag == 0) {  
+              return true;
+            }
+
+          }
+          }
+        }
+        return false;
+      } else if(type == "Questionnaire") {
+        for (const elem of instances.state.questionnaireElements) {
+      
+          if(elem.answered){
+            console.log(elem.answered);
+            return true;
+          }
+        
+      }
+      return false;
+      }
+    }
 
     /**
      * Get xAPI data from sub content types
