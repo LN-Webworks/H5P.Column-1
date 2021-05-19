@@ -44,13 +44,23 @@
   margin-left: 0;
   margin-right: 0;
 }
-.h5p-no-frame > .h5p-column > div > .h5p-single-choice-set .h5p-sc-sound-control {
+.h5p-no-frame
+  > .h5p-column
+  > div
+  > .h5p-single-choice-set
+  .h5p-sc-sound-control {
   top: 0;
   right: 0;
 }
 
 /* QS is a bit to eager... */
-.h5p-no-frame > .h5p-column > div > .h5p-column-content > .questionset .h5p-question > *:first-child {
+.h5p-no-frame
+  > .h5p-column
+  > div
+  > .h5p-column-content
+  > .questionset
+  .h5p-question
+  > *:first-child {
   margin-top: 1em;
 }
 
