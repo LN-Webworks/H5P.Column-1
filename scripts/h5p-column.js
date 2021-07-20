@@ -330,7 +330,7 @@ H5P.Column = (function (EventDispatcher) {
               },
           },
           appendTo: document.body,
-      });
+        });
 
 
 
