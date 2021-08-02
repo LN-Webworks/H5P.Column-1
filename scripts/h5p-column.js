@@ -367,6 +367,20 @@ H5P.Column = (function (EventDispatcher) {
 
       // Add to DOM
       $container.addClass('h5p-column').html('').append(wrapper);
+
+      // If none of the children instances is a task, fire off a completed
+      // xAPI event
+      setTimeout(() => {
+        console.log('Checking if any of the column children are tasks...');
+        for (var i = 0; i < instances.length; i++) {
+          if(Column.isTask(instances[i])) {
+            console.log('Found task.');
+            return;
+          }
+        }
+        console.log('No tasks found. Marking activity as completed.');
+        completed();
+      }, 1000);
     };
 
     /**
