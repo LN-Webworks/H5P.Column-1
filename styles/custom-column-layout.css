@@ -21,12 +21,12 @@
 .h5p-score-table-custom tbody tr td:first-child {
   /* background-color: aqua; */
   width: 75%;
-  text-align: left;
+  text-align: left !important;
 }
 
 .h5p-score-table-custom thead tr th:last-child,
 .h5p-score-table-custom tbody tr td:last-child {
-  text-align: right;
+  text-align: right !important;
 }
 
 .h5p-score-table-custom thead tr th {

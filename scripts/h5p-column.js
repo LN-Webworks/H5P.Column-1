@@ -281,7 +281,7 @@ H5P.Column = (function (EventDispatcher) {
       }
       if(typeof data.parent == "undefined") {
         H5P.JoubelUI.createButton({
-          class: "view-summary ",
+          class: "view-summary h5p-column-summary",
           html: 'View Summary',
           on: {
               click: function () {
