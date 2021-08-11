@@ -582,13 +582,13 @@ H5P.Column = (function (EventDispatcher) {
         }
         table_content += '<tr>';
         table_content += '<td>'+param_content.content.metadata.title+'</td>';
-        table_content += '<td>'+cust_score+'/'+cust_max_score+'</td>';
+        table_content += '<td style="text-align:right;">'+cust_score+'/'+cust_max_score+'</td>';
         table_content += '</tr>';
         i++;
       } 
       table_content += '</tbody>';
      
-      var summary_html = '<div class="custom-summary-section"><div class="h5p-summary-table-pages"><table class="h5p-score-table-custom" style="min-height:100px;"><thead><tr><th>Content</th><th>Score/Total</th></tr></thead>'+table_content+'</table></div></div>';
+      var summary_html = '<div class="custom-summary-section"><div class="h5p-summary-table-pages"><table class="h5p-score-table-custom" style="min-height:100px;width:100%;"><thead><tr><th>Content</th><th style="text-align:right;">Score/Total</th></tr></thead>'+table_content+'</table></div></div>';
       
       return summary_html;
       
@@ -603,7 +603,7 @@ H5P.Column = (function (EventDispatcher) {
       
           var table_content = '<tr>';
           table_content += '<td>'+title+'  (Skipped) </td>';
-          table_content += '<td>0/0</td>';
+          table_content += '<td style="text-align:right;">0/0</td>';
           table_content += '</tr>';
          return table_content;
          
