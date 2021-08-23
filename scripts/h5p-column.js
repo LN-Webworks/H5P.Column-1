@@ -60,6 +60,10 @@ H5P.Column = (function (EventDispatcher) {
         max += event.getMaxScore();
       }
 
+      if(max === raw) {
+        max += 1;
+      }
+
       self.triggerXAPIScored(raw, max, 'completed');
     };
 
@@ -123,7 +127,7 @@ H5P.Column = (function (EventDispatcher) {
       var instance = H5P.newRunnable(content, id, undefined, true, contentData);
 
       // Bubble resize events
-      //bubbleUp(instance, 'resize', self);
+      bubbleUp(instance, 'resize', self);
 
       // Check if instance is a task
       if (Column.isTask(instance)) {
