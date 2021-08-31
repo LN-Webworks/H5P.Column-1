@@ -556,7 +556,8 @@ H5P.Column = (function (EventDispatcher) {
           var param_content = params.content[i];
           var content_type = param_content.content.metadata.contentType;
           
-          if( typeof inst.getAnswerGiven == "function" && !inst.getAnswerGiven()){
+          /*if( typeof inst.getAnswerGiven == "function" && (inst.getAnswerGiven() != undefined || !inst.getAnswerGiven())) {
+            console.log('563');
             skipped.push(inst);
             table_content += printSkippedTr(param_content.content.metadata.title);
             
@@ -574,7 +575,7 @@ H5P.Column = (function (EventDispatcher) {
                   i++;
                   continue;
                 }
-          }
+          }*/
 
         if(typeof inst.getScore == "undefined") {
             var cust_score = 0;
