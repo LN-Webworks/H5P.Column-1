@@ -303,7 +303,7 @@ H5P.Column = (function (EventDispatcher) {
                       }
                       
                     }
-                    if(maxwa === rawwa) {
+                    if(maxwa === 0) {
                       maxwa += 1;
                     }
                     self.triggerXAPIScored(rawwa, maxwa, 'submitted-curriki');
