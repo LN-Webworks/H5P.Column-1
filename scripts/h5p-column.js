@@ -301,65 +301,65 @@ H5P.Column = (function (EventDispatcher) {
         // Add content
         addRunnable(content.content, grabContentData(i));
       }
-      // if(typeof data.parent == "undefined" && showSummary()) {
-      //   H5P.JoubelUI.createButton({
-      //     class: "view-summary h5p-column-summary",
-      //     html: 'View Summary',
-      //     on: {
-      //         click: function () {
-      //           H5P.jQuery('.custom-summary-section').remove();
-      //           H5P.jQuery('.submit-answers').remove();
+      if(typeof data.parent == "undefined" && showSummary()) {
+        H5P.JoubelUI.createButton({
+          class: "view-summary h5p-column-summary",
+          html: 'View Summary',
+          on: {
+              click: function () {
+                H5P.jQuery('.custom-summary-section').remove();
+                H5P.jQuery('.submit-answers').remove();
                 
-      //             var confirmationDialog = new H5P.ConfirmationDialog({
-      //               headerText: 'Column Layout Summary',
-      //               dialogText: createSummary(wrapper,tasksResultEvent),
-      //               cancelText: 'Cancel',
-      //               confirmText: "Submit Answers"
-      //             });
-      //             confirmationDialog.on('confirmed', function () {
-      //               //self.removeGoal($removeContainer);
-      //               // Set focus to add new goal button
-      //               //self.$createGoalButton.focus();
-      //               var rawwa = 0;
-      //               var maxwa = 0;
-      //               console.log(tasksResultEvent);
-      //               for (var m = 0; m < tasksResultEvent.length; m++) {
-      //                 var eventwa = tasksResultEvent[m];
-      //                 if(typeof eventwa != "undefined"){
-      //                   rawwa += eventwa.getScore();
-      //                   maxwa += eventwa.getMaxScore();
-      //                 }
+                  var confirmationDialog = new H5P.ConfirmationDialog({
+                    headerText: 'Column Layout Summary',
+                    dialogText: createSummary(wrapper,tasksResultEvent),
+                    cancelText: 'Cancel',
+                    confirmText: "Submit Answers"
+                  });
+                  confirmationDialog.on('confirmed', function () {
+                    //self.removeGoal($removeContainer);
+                    // Set focus to add new goal button
+                    //self.$createGoalButton.focus();
+                    var rawwa = 0;
+                    var maxwa = 0;
+                    console.log(tasksResultEvent);
+                    for (var m = 0; m < tasksResultEvent.length; m++) {
+                      var eventwa = tasksResultEvent[m];
+                      if(typeof eventwa != "undefined"){
+                        rawwa += eventwa.getScore();
+                        maxwa += eventwa.getMaxScore();
+                      }
                       
-      //               }
-      //               if(maxwa === 0) {
-      //                 maxwa += 1;
-      //               }
-      //               self.triggerXAPIScored(rawwa, maxwa, 'submitted-curriki');
-      //               console.log(skipped);
-      //               for(skip_rec of skipped) {
-      //                 console.log('skipped');
-      //                 //skip_rec.triggerXAPIScored(rawwa, maxwa, 'skipped');
-      //                 const customProgressedEvent = skip_rec.createXAPIEventTemplate('skipped');
+                    }
+                    if(maxwa === 0) {
+                      maxwa += 1;
+                    }
+                    self.triggerXAPIScored(rawwa, maxwa, 'submitted-curriki');
+                    console.log(skipped);
+                    for(skip_rec of skipped) {
+                      console.log('skipped');
+                      //skip_rec.triggerXAPIScored(rawwa, maxwa, 'skipped');
+                      const customProgressedEvent = skip_rec.createXAPIEventTemplate('skipped');
             
-      //                 if (customProgressedEvent.data.statement.object) {
-      //                   //customProgressedEvent.data.statement.object.definition['name'] = {'en-US': skip_rec.contentData.metadata.title};
-      //                   console.log(customProgressedEvent);
-      //                   //section.instance.triggerXAPIScored(0,1,customProgressedEvent);
-      //                   skip_rec.trigger(customProgressedEvent);
-      //                 }
+                      if (customProgressedEvent.data.statement.object) {
+                        //customProgressedEvent.data.statement.object.definition['name'] = {'en-US': skip_rec.contentData.metadata.title};
+                        console.log(customProgressedEvent);
+                        //section.instance.triggerXAPIScored(0,1,customProgressedEvent);
+                        skip_rec.trigger(customProgressedEvent);
+                      }
 
-      //               }
-      //             });
+                    }
+                  });
           
-      //             confirmationDialog.appendTo(parent.document.body);
-      //             confirmationDialog.show();
-      //             //H5P.jQuery(window.parent).scrollTop(0); 
-      //             H5P.jQuery(".h5p-confirmation-dialog-popup").css("top", "80%"); 
-      //         },
-      //     },
-      //     appendTo: wrapper,
-      // });
-      // }
+                  confirmationDialog.appendTo(parent.document.body);
+                  confirmationDialog.show();
+                  //H5P.jQuery(window.parent).scrollTop(0); 
+                  H5P.jQuery(".h5p-confirmation-dialog-popup").css("top", "80%"); 
+              },
+          },
+          appendTo: wrapper,
+      });
+      }
       
     };
 
@@ -601,24 +601,24 @@ H5P.Column = (function (EventDispatcher) {
                   continue;
                 }
           }*/
-
-        if(typeof inst.getScore == "undefined") {
+          if(typeof inst.getScore == "undefined") {
             var cust_score = 0;
             var cust_max_score = 0;
-
-        }else {
+            
+          }else {
           var cust_score = inst.getScore();
           var cust_max_score = inst.getMaxScore();
         }
         table_content += '<tr>';
         table_content += '<td>'+param_content.content.metadata.title+'</td>';
-        table_content += '<td style="text-align:right;">'+cust_score+'/'+cust_max_score+'</td>';
+        // table_content += '<td style="text-align:right;">'+cust_score+'/'+cust_max_score+'</td>';
+        // table_content += '<td style="text-align:right;">'+cust_score+'</td>';
         table_content += '</tr>';
         i++;
       } 
       table_content += '</tbody>';
      
-      var summary_html = '<div class="custom-summary-section"><div class="h5p-summary-table-pages"><table class="h5p-score-table-custom" style="min-height:100px;width:100%;"><thead><tr><th>Content</th><th style="text-align:right;">Score/Total</th></tr></thead>'+table_content+'</table></div></div>';
+      var summary_html = '<div class="custom-summary-section"><div class="h5p-summary-table-pages"><table class="h5p-score-table-custom" style="min-height:100px;width:100%;"><thead><tr><th>Content</th></tr></thead>'+table_content+'</table></div></div>';
       
       return summary_html;
       
