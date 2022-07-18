@@ -302,63 +302,66 @@ H5P.Column = (function (EventDispatcher) {
         addRunnable(content.content, grabContentData(i));
       }
       if(typeof data.parent == "undefined" && showSummary()) {
-        H5P.JoubelUI.createButton({
-          class: "view-summary h5p-column-summary",
-          html: 'View Summary',
-          on: {
-              click: function () {
-                H5P.jQuery('.custom-summary-section').remove();
-                H5P.jQuery('.submit-answers').remove();
-                
-                  var confirmationDialog = new H5P.ConfirmationDialog({
-                    headerText: 'Column Layout Summary',
-                    dialogText: createSummary(wrapper,tasksResultEvent),
-                    cancelText: 'Cancel',
-                    confirmText: "Submit Answers"
-                  });
-                  confirmationDialog.on('confirmed', function () {
-                    //self.removeGoal($removeContainer);
-                    // Set focus to add new goal button
-                    //self.$createGoalButton.focus();
-                    var rawwa = 0;
-                    var maxwa = 0;
-                    console.log(tasksResultEvent);
-                    for (var m = 0; m < tasksResultEvent.length; m++) {
-                      var eventwa = tasksResultEvent[m];
-                      if(typeof eventwa != "undefined"){
-                        rawwa += eventwa.getScore();
-                        maxwa += eventwa.getMaxScore();
+        let isColumnSummary = window.localStorage.getItem("isColumnSummary");
+        if(isColumnSummary == "false") {
+          H5P.JoubelUI.createButton({
+            class: "view-summary h5p-column-summary",
+            html: 'View Summary',
+            on: {
+                click: function () {
+                  H5P.jQuery('.custom-summary-section').remove();
+                  H5P.jQuery('.submit-answers').remove();
+                  
+                    var confirmationDialog = new H5P.ConfirmationDialog({
+                      headerText: 'Column Layout Summary',
+                      dialogText: createSummary(wrapper,tasksResultEvent),
+                      cancelText: 'Cancel',
+                      confirmText: "Submit Answers"
+                    });
+                    confirmationDialog.on('confirmed', function () {
+                      //self.removeGoal($removeContainer);
+                      // Set focus to add new goal button
+                      //self.$createGoalButton.focus();
+                      var rawwa = 0;
+                      var maxwa = 0;
+                      console.log(tasksResultEvent);
+                      for (var m = 0; m < tasksResultEvent.length; m++) {
+                        var eventwa = tasksResultEvent[m];
+                        if(typeof eventwa != "undefined"){
+                          rawwa += eventwa.getScore();
+                          maxwa += eventwa.getMaxScore();
+                        }
+                        
                       }
-                      
-                    }
-                    if(maxwa === 0) {
-                      maxwa += 1;
-                    }
-                    self.triggerXAPIScored(rawwa, maxwa, 'submitted-curriki');
-                    console.log(skipped);
-                    for(skip_rec of skipped) {
-                      console.log('skipped');
-                      //skip_rec.triggerXAPIScored(rawwa, maxwa, 'skipped');
-                      const customProgressedEvent = skip_rec.createXAPIEventTemplate('skipped');
+                      if(maxwa === 0) {
+                        maxwa += 1;
+                      }
+                      self.triggerXAPIScored(rawwa, maxwa, 'submitted-curriki');
+                      console.log(skipped);
+                      for(skip_rec of skipped) {
+                        console.log('skipped');
+                        //skip_rec.triggerXAPIScored(rawwa, maxwa, 'skipped');
+                        const customProgressedEvent = skip_rec.createXAPIEventTemplate('skipped');
+              
+                        if (customProgressedEvent.data.statement.object) {
+                          //customProgressedEvent.data.statement.object.definition['name'] = {'en-US': skip_rec.contentData.metadata.title};
+                          console.log(customProgressedEvent);
+                          //section.instance.triggerXAPIScored(0,1,customProgressedEvent);
+                          skip_rec.trigger(customProgressedEvent);
+                        }
+  
+                      }
+                    });
             
-                      if (customProgressedEvent.data.statement.object) {
-                        //customProgressedEvent.data.statement.object.definition['name'] = {'en-US': skip_rec.contentData.metadata.title};
-                        console.log(customProgressedEvent);
-                        //section.instance.triggerXAPIScored(0,1,customProgressedEvent);
-                        skip_rec.trigger(customProgressedEvent);
-                      }
-
-                    }
-                  });
-          
-                  confirmationDialog.appendTo(parent.document.body);
-                  confirmationDialog.show();
-                  //H5P.jQuery(window.parent).scrollTop(0); 
-                  H5P.jQuery(".h5p-confirmation-dialog-popup").css("top", "80%"); 
-              },
-          },
-          appendTo: wrapper,
-      });
+                    confirmationDialog.appendTo(parent.document.body);
+                    confirmationDialog.show();
+                    //H5P.jQuery(window.parent).scrollTop(0); 
+                    H5P.jQuery(".h5p-confirmation-dialog-popup").css("top", "80%"); 
+                },
+            },
+            appendTo: wrapper,
+          });
+        }
       }
       
     };
